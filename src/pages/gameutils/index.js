@@ -2,14 +2,14 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import './index.css';
 
-const App = createReactClass({
+const GameUtils = createReactClass({
   render () {
     return (
       <div className="App">
-      首页
+      测试
       </div>
     );
   }
 });
 
-export default App;
+export default GameUtils;

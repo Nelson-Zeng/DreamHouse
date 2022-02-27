@@ -2,7 +2,7 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import './index.css';
 
-const App = createReactClass({
+const GameUtils = createReactClass({
   render () {
     return (
       <div className="App">
@@ -12,4 +12,4 @@ const App = createReactClass({
   }
 });
 
-export default App;
+export default GameUtils;
