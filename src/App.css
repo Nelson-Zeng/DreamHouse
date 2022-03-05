@@ -1,0 +1,16 @@
+@import '~antd/dist/antd.css';
+
+.app {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.logo {
+    height: 64px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+}
