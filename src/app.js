@@ -5,14 +5,22 @@ import route from './route/route';
 import {
   Routes,
   Route,
-  useLocation
+  useLocation,
+  useNavigate
 } from 'react-router-dom';
 import NotFound from './pages/notfound';
+import request from './utils/request';
 
-const { Sider } = Layout;
+const { Sider, Header } = Layout;
 const { SubMenu } = Menu;
 
 const App = () => {
+  (() => {
+    request('', {needAuth: true});
+  })();
+
+  const navigate = useNavigate();
+
   const [menuOpenedKeys, setMenuOpenedKeys] = useState([]);
   const [menuSelectedKeys, setMenuSelectedKeys] = useState([]);
 
@@ -39,19 +47,45 @@ const App = () => {
       setMenuSelectedKeys(path.splice(path.length - 1));
       setMenuOpenedKeys(path);
     } catch (e) {
-      console.log('err', e);
+      // do nothing
     }
 
   }, [pathname]);
 
-  const onMenuClick = () => {
+  // 处理导航点击事件
+  const onMenuClick = (e) => {
+    if (!e) {return;}
+    const {key, domEvent} = e;
+    const temp = [...menuSelectedKeys];
+    if (!temp.includes(key)) {
+      temp.push(key);
+    } else {
+      const index = temp.findIndex((item) => item === key);
+      temp.splice(index);
+    }
+    setMenuSelectedKeys(temp);
+    const {path} = domEvent.target.parentElement.dataset;
+    navigate(path);
+  };
+
+  // 处理侧边栏展开/收起状态
+  const onSubMenuClick = (e) => {
+    const {key} = e;
+    const temp = [...menuOpenedKeys];
+    if (!temp.includes(key)) {
+      temp.push(key);
+    } else {
+      const index = temp.findIndex((item) => item === key);
+      temp.splice(index);
+    }
+    setMenuOpenedKeys(temp);
   };
 
   // 递归遍历配置，生成侧边栏
   const renderSide = (arr) => arr.map((item) => {
     if (item.children) {
       return (
-        <SubMenu key={item.key} title={item.title}>
+        <SubMenu key={item.key} title={item.title} onTitleClick={onSubMenuClick}>
           {
             renderSide(item.children)
           }
@@ -59,7 +93,7 @@ const App = () => {
       );
     } else {
       return (
-        <Menu.Item key={item.key}>{item.title}</Menu.Item>
+        <Menu.Item key={item.key} data-path={item.path}>{item.title}</Menu.Item>
       );
     }
   });
@@ -81,6 +115,7 @@ const App = () => {
         </Menu>
       </Sider>
       <Layout>
+        <Header></Header>
         <Routes>
           <Route exact path='/gameutils/eu4/wonders' />
           <Route exact path="/*" element={<NotFound />} />
