@@ -7,17 +7,8 @@ axios.defaults.baseURL = 'https://www.utawareruyume.com/api';
 axios.defaults.timeout = 50000;
 axios.defaults.withCredentials = false;
 
-const request = async function (url, {header, data, needAuth}) {
+const request = async function (url, {header, data}) {
   let newHeader = {};
-  if (needAuth) {
-    const token = localStorage.getItem('Token');
-    if (!token) {
-      ReactDOM.render(
-        <Login />,
-        document.getElementById('ext')
-      );
-    }
-  }
   let body = {
     method: 'POST'
   };
@@ -27,6 +18,24 @@ const request = async function (url, {header, data, needAuth}) {
   if (data) {
     body = {...body, ...data};
   }
+  const res = await login().catch(() => {});
 };
+
+const login = () => new Promise((resolve, reject) => {
+  const onCancel = () => {
+    ReactDOM.unmountComponentAtNode(document.getElementById('login'));
+    reject(new Error('用户未登录'));
+  };
+
+  const onSuccess = () => {
+    ReactDOM.unmountComponentAtNode(document.getElementById('login'));
+    resolve(true);
+  };
+
+  ReactDOM.render(
+    <Login onCancel={onCancel} onSuccess={onSuccess}/>,
+    document.getElementById('login')
+  );
+});
 
 export default request;

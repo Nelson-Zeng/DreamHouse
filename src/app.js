@@ -16,7 +16,7 @@ const { SubMenu } = Menu;
 
 const App = () => {
   (() => {
-    request('', {needAuth: true});
+    setTimeout(() => request('', {needAuth: true}), 100);
   })();
 
   const navigate = useNavigate();
